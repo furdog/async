@@ -2,10 +2,10 @@
 Async library based on computed goto for C.
 
 # Features
-- Clean syntax, feels almost as native.
+- Clean syntax, feels almost as native;
 - Overhead as little as one ptrdiff_t variable;
-- Boilerplate is 0-2 lines of code for every async macro.
-- Library is currently around 50 lines of code;
+- Boilerplate is 0-2 lines of code for every async macro;
+- Library is currently around 50 lines of code.
 
 # Basics
 
@@ -125,3 +125,7 @@ But... What if we could just run native function, and force it to wait for incom
 Well we can do that, but then function will block other code, which is not always desired.
 
 With async you could do that with minimum efforts.
+
+# Further notes
+The library not in its final state.
+The main point is to keep is as minimal as posible.
