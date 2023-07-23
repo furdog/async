@@ -267,3 +267,34 @@ bool at2_get_can_frame(struct at2 *self, struct at2_can_frame *frame)
 	at2_can_frame_init(&self->can);
 	return true;
 }
+
+/************************************************
+ * UNIT_ASYNC_TEST3
+ * Description:
+ * 	Most basic test.
+ ***********************************************/
+#include "async.h"
+#include <stdio.h>
+
+async at3()
+{
+	/* Every asynchronous macro destroy local variables.
+	 * So we need to keep them non-local, or pass as *self parameter. */
+	static async state;
+	static int i;
+	
+	/* Dispatcher will bring us back to the last yielded state. */
+	ASYNC_DISPATCH(state);
+	
+	for (i = 0; i < 5; i++) {
+		printf("Value of i variable: %i\n", i);
+
+		/* Return from function with return value of 1.
+		 * When function gets called again, dispatcher will
+		 * continue executing code after this yield.*/
+		ASYNC_YIELD(1);
+	}
+	
+	/* Return 0, so we know function has ended. */
+	ASYNC_RETURN(0);
+}

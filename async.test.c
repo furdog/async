@@ -43,6 +43,8 @@ int main()
 			printf("%02X ", frame2.data[i]);
 		printf("\n");
 	}
+	
+	while (at3());
 
 	return 0;
 }
