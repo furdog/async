@@ -12,6 +12,91 @@ Async library based on computed goto for C.
 - Keep in mind that using every async macro WIPES OUT all local variables;
 - # Have fun in debugging this :smiling_face_with_tear:
 
+# Documentation
+### Data types
+```C
+typedef ptrdiff_t async;
+```
+- This is the only type you need.
+async is used in three different contexts:
+ - return value of async function;
+ - computed goto label;
+ - tells if async function has ended.
+  	(when function returns its goto label becomes NULL)
+
+### Methods
+```C
+void async_init(async *self) { *self = (ptrdiff_t)NULL; }
+```
+- Use this if you want to initialize computed goto label.
+
+### Macroses
+```C
+#define ASYNC_DISPATCH(state)                                                  \
+	void **_state;		   /* Computed goto state. */                  \
+	async  _async_call_result; /* For asynchronous calls. */               \
+	(void)_async_call_result;                                              \
+                                                                               \
+	_state = (void *)&state;                                               \
+	if (*_state) {                                                         \
+		goto **_state;                                                 \
+	}
+```
+- This macros shall be placed at beginning of every async function.
+It is used to return to the last saved state. Set 'state' to NON-local variable
+of 'async' data type. This variable will then used as computed goto label.
+
+```C
+#define ASYNC_YIELD(ret)                                                       \
+	do {                                                                   \
+		ASYNC_LABEL(return ret)                                        \
+	} while (0)
+```
+- This one is used to return from the function. Further call will continue execution
+after this macros. Set 'ret' to any desired value.
+
+```C
+#define ASYNC_AWAIT(cond, ret)                                                 \
+	do {                                                                   \
+		ASYNC_LABEL() if (!(cond)) return ret;                         \
+	} while (0)
+```
+- This macros is the same as 'while (!cond);', but instead of going into
+infinite loop, it yields with return value specified in 'ret'.	
+
+```C
+#define ASYNC_RETURN(ret)                                                      \
+	do {                                                                   \
+		*_state = NULL;                                                \
+		return ret;                                                    \
+	} while (0)
+```
+- Same as 'return some_value;' but this one is designed for asynchronous function.
+Right after this call goto label becomes NULL. which means async function restarts.
+
+```C
+#define ASYNC_CALL(func, state)                                                \
+	do {                                                                   \
+		_async_call_result = func;                                     \
+		if (!state)                                                    \
+			break;                                                 \
+                                                                               \
+		ASYNC_YIELD(_async_call_result);                               \
+	} while (true)
+```
+- This allows call asynchronous functions like 'normal' functions within another
+asynchronous function. Set 'state' to one which is used by the called function.
+The 'state' is used to get acknowledged if nested function used ASYNC_RETURN.
+Caller will yield with state that is returned by the callee, except the state
+that is returned by ASYNC_RETURN
+
+```C
+#define ASYNC_CALL_RESULT _async_call_result
+```
+- When ASYNC_CALL macros is used, it returns a value, this value then could be
+used to check return value of called function.
+ASYNC_CALL_RESULT is only valid before any other async macro, since it's local variable.
+
 # Basics
 
 ```C
