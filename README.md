@@ -7,6 +7,11 @@ Async library based on computed goto for C.
 - Boilerplate is 0-2 lines of code for every async macro;
 - Library is currently around 50 lines of code.
 
+# Disadvantages
+- Non ANSI-C compilant. Computed goto is a compiler-specific feature;
+- Keep in mind that using every async macro WIPES OUT all local variables;
+- # Have fun in debugging this :smiling_face_with_tear:
+
 # Basics
 
 ```C
