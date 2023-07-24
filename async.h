@@ -31,20 +31,22 @@ void async_init(async *self) { *self = (ptrdiff_t)NULL; }
 	async  _async_call_result; /* For asynchronous calls. */               \
 	(void)_async_call_result;                                              \
                                                                                \
-	_state = (void *)&state;                                               \
+	_state = (void **)&state;                                              \
 	if (*_state) {                                                         \
 		goto **_state;                                                 \
 	}
 /** Returns from the async function, with saving state. */
 #define ASYNC_YIELD(ret)                                                       \
 	do {                                                                   \
-		ASYNC_LABEL(return ret)                                        \
+		ASYNC_LABEL(return ret);                                       \
 	} while (0)
 
 /** Can be placed anywhere, saves state and yields until condition is true. */
 #define ASYNC_AWAIT(cond, ret)                                                 \
 	do {                                                                   \
-		ASYNC_LABEL() if (!(cond)) return ret;                         \
+		ASYNC_LABEL();                                                 \
+		if (!(cond))                                                   \
+			return ret;                                            \
 	} while (0)
 
 /** Used to return from function safely. Resets execution. */
