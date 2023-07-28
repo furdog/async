@@ -263,6 +263,8 @@ bool at2_get_can_frame(struct at2 *self, struct at2_can_frame *frame)
 	if (!self->has_frame)
 		return false;
 
+	self->has_frame = false;
+
 	*frame = self->can;
 	at2_can_frame_init(&self->can);
 	return true;
