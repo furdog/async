@@ -11,6 +11,9 @@ typedef ptrdiff_t async;
 /** Init before calling function that uses async state. */
 void async_init(async *self) { *self = (ptrdiff_t)NULL; }
 
+/** Tells us if async function has returned. */
+int async_has_returned(async *self) { return *self == (ptrdiff_t)NULL; }
+
 /* Ignore gcc standart-specification warnings. */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
@@ -35,6 +38,7 @@ void async_init(async *self) { *self = (ptrdiff_t)NULL; }
 	if (*_state) {                                                         \
 		goto **_state;                                                 \
 	}
+	
 /** Returns from the async function, with saving state. */
 #define ASYNC_YIELD(ret)                                                       \
 	do {                                                                   \
