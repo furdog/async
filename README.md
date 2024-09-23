@@ -205,17 +205,19 @@ async parse_line(struct instance *self)
 As you can see, in order to asynchronous code to work we did almost no changes to the original code,
 except changed the way we reference things and syntax became little more complicated.
 
-# Rationale
-The main disadvantage of native variant is that in order to convert serial data to CAN
-We must have access to full serial string. But serial data as known is non-synchronous and have
-streaming nature, we cannot just run native code without having full string available. 
-Moreover we do not know the lengh of buffer were gonna parse at the first place.
-
-But... What if we could just run native function, and force it to wait for incoming data?
-Well we can do that, but then function will block other code, which is not always desired.
-
-With async you could do that with minimum efforts.
-
-# Further notes
-The library not in its final state.
-The main point is to keep is as minimal as posible.
+# Shorter version (not yet documented)
+```C
+#include <stddef.h>
+typedef void * async;
+#define ASYNC_CAT1(a, b) a##b
+#define ASYNC_CAT(a, b) ASYNC_CAT1(a, b)
+#define async_dispatch(state) void **_state = &state; \
+			 if (*_state) { goto **_state; }
+#define async_yield(act) do { *_state = &&ASYNC_CAT(_l, __LINE__); \
+			      act; ASYNC_CAT(_l, __LINE__) :; } while (0)
+#define async_await(cond, act) \
+			 do { async_yield(); if (!(cond)) { act; } } while (0)
+#define async_reset(act) do { *_state = NULL; act; } while (0)
+```
+In this version you must specify return value explicitly, for example: ```async_yield(return true)```.
+ASYNC_RETURN replaced with ```async_reset(some_action)```.
