@@ -207,17 +207,19 @@ except changed the way we reference things and syntax became little more complic
 
 # Shorter version (not yet documented)
 ```C
-#include <stddef.h>
+#ifndef ASYNC
 typedef void * async;
 #define ASYNC_CAT1(a, b) a##b
 #define ASYNC_CAT(a, b) ASYNC_CAT1(a, b)
-#define async_dispatch(state) void **_state = &state; \
+#define ASYNC_DISPATCH(state) void **_state = &state; \
 			 if (*_state) { goto **_state; }
-#define async_yield(act) do { *_state = &&ASYNC_CAT(_l, __LINE__); \
+#define ASYNC_YIELD(act) do { *_state = &&ASYNC_CAT(_l, __LINE__); \
 			      act; ASYNC_CAT(_l, __LINE__) :; } while (0)
-#define async_await(cond, act) \
-			 do { async_yield(); if (!(cond)) { act; } } while (0)
-#define async_reset(act) do { *_state = NULL; act; } while (0)
+#define ASYNC_AWAIT(cond, act) \
+			 do { ASYNC_YIELD(); if (!(cond)) { act; } } while (0)
+#define ASYNC_RESET(act) do { *_state = NULL; act; } while (0)
+#define ASYNC
+#endif
 ```
 In this version you must specify return value explicitly, for example: ```async_yield(return true)```.
 ASYNC_RETURN replaced with ```async_reset(some_action)```.
