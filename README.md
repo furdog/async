@@ -221,5 +221,5 @@ typedef void * async;
 #define ASYNC
 #endif
 ```
-In this version you must specify return value explicitly, for example: ```async_yield(return true)```.
-ASYNC_RETURN replaced with ```async_reset(some_action)```.
+In this version you must specify return value explicitly, for example: ```ASYNC_YIELD(return true)```.
+ASYNC_RETURN replaced with ```ASYNC_RESET(some_action)```.
