@@ -1,6 +1,6 @@
-#include <stdbool.h> //for bool
-#include <time.h>    //for clock_t
-#include <stdio.h>   //for printf
+#include <stdbool.h>
+#include <time.h>
+#include <stdio.h>
 
 #include "async.h"
 
