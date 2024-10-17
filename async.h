@@ -1,4 +1,4 @@
-#ifndef ASYNC
+#ifndef ASYNC_GUARD
 typedef void * async;
 #define ASYNC_CAT1(a, b) a##b
 #define ASYNC_CAT(a, b) ASYNC_CAT1(a, b)
@@ -9,5 +9,5 @@ typedef void * async;
 #define ASYNC_AWAIT(cond, act) \
 			 do { ASYNC_YIELD(); if (!(cond)) { act; } } while (0)
 #define ASYNC_RESET(act) do { *_state = NULL; act; } while (0)
-#define ASYNC
+#define ASYNC_GUARD
 #endif
