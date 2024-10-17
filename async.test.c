@@ -68,6 +68,8 @@ struct async_test_counter {
 
 void async_test_counter_init(struct async_test_counter *self)
 {
+	self->async_state = 0;
+
 	self->counter = 0;
 	self->timer   = 0;
 }
